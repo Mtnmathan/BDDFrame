@@ -1,5 +1,6 @@
 package PageObjects;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -22,6 +23,10 @@ public class HomePageObjects {
 
     @FindBy(xpath="//div[@id='nav-flyout-ya-signin']//a[@class='nav-action-signin-button']")
     WebElement siginBtn;
+    
+    @FindBy(id="twotabsearchtextbox")
+    WebElement searchBox;
+    
 
     public String getHomePageTitle() {
         return driver.getTitle();
@@ -33,7 +38,18 @@ public class HomePageObjects {
 
     public void validateSigninBtn() {
         String btnText = siginBtn.getAttribute("innerText");
-        System.out.println(btnText.equalsIgnoreCase("Sign in"));
+        boolean result = btnText.equalsIgnoreCase("Sign in");
+        
+        if(result=true) {
+        	System.out.println("Page contains sign in button");
+        }
+        else {
+        	System.out.println("Page doesn't contains sign in button");
+        }
         driver.close();
+    }
+    
+    public void sendtextFromid(String value) {
+    	searchBox.sendKeys(value);
     }
 }

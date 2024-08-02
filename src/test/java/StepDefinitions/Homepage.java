@@ -1,9 +1,19 @@
 package StepDefinitions;
 
+import java.io.IOException;
 import java.time.Duration;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import com.aventstack.extentreports.ExtentTest;
+
 import PageObjects.HomePageObjects;
+import Utilities.BasePage;
+import Utilities.ExtendReport;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -11,31 +21,53 @@ import io.cucumber.java.en.Then;
 public class Homepage {
 
     WebDriver driver;
+    ExtentTest test;
     HomePageObjects homePageObjects;
+    BasePage basepage;
+    ExtendReport extentreport;
 
-    // Zero-argument constructor required by Cucumber
     public Homepage() {
     }
 
+    @Before
+    public void setUp() {
+        ExtendReport.setUpReport();
+        ExtendReport.createTest("Homepage Test");
+    }
+    
     @Given("User is on home page")
-    public void user_is_on_home_page() {
+    public void user_is_on_home_page() throws IOException {
         driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(25));
-        driver.get("https://www.amazon.in/");
-        homePageObjects = new HomePageObjects(driver); // Initialize HomePageObjects with the driver
+        basepage = new BasePage(driver);
+        
+        basepage.maximizePage();
+        basepage.impWait();
+        basepage.getURL("https://www.amazon.in/");
+        ExtendReport.logInfo(driver, "User landed in amazon Page");
+        
+        homePageObjects = new HomePageObjects(driver);
         String title = homePageObjects.getHomePageTitle();
         System.out.println(title);
+        ExtendReport.logPass(driver, "Page title fetched");
+        
+        homePageObjects.sendtextFromid("Samsung");
     }
 
     @And("Mouse hover on Hello Signin")
     public void mouse_hover_on_hello_signin() throws InterruptedException {
-    	Thread.sleep(7000);
-        homePageObjects.hoverOnHello(); // Use instance method
+        homePageObjects.hoverOnHello();
     }
 
     @Then("Signin button should display")
     public void signin_button_should_display() {
-        homePageObjects.validateSigninBtn(); // Use instance method
+        homePageObjects.validateSigninBtn();
+    }
+    
+    @After
+    public void tearDown() {
+        ExtendReport.tearDownReport();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
