@@ -11,11 +11,14 @@ import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+
 public class ExtendReport {
+	static WebDriver driver; 
     static ExtentReports extent;
     static ExtentTest test;
     static ExtentSparkReporter htmlReporter;
-    private static final Map<Long, ExtentTest> extentTestMap = new HashMap<>();
 
     public static void setUpReport() {
         htmlReporter = new ExtentSparkReporter("extentReport.html");
@@ -25,10 +28,6 @@ public class ExtendReport {
 
     public static void createTest(String testName) {
         test = extent.createTest(testName);
-    }
-
-    public static synchronized ExtentTest getTest() {
-        return extentTestMap.get(Thread.currentThread().getId());
     }
     
     public static void logInfo(WebDriver driver, String message) {
@@ -41,11 +40,13 @@ public class ExtendReport {
         test.log(Status.PASS, message, MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
     }
 
-    public static void logFail(String message) {
-        test.log(Status.FAIL, message);
+    public static void logFail(WebDriver driver, String message) {
+    	String screenshotPath = BasePage.captureScreenshot(driver, "fail_" + System.currentTimeMillis());
+        test.log(Status.FAIL, message, MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
     }
-
+    
     public static void tearDownReport() {
         extent.flush();
     }
+    
 }

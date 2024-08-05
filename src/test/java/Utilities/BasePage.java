@@ -26,7 +26,7 @@ import org.testng.Reporter;
 public class BasePage {
 	
 	static WebDriver driver;
-
+	
 	public BasePage(WebDriver driver) {
         this.driver = driver;
     }

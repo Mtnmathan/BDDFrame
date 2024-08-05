@@ -3,7 +3,6 @@ package StepDefinitions;
 import java.io.IOException;
 import java.time.Duration;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -20,13 +19,17 @@ import io.cucumber.java.en.Then;
 
 public class Homepage {
 
-    WebDriver driver;
-    ExtentTest test;
-    HomePageObjects homePageObjects;
-    BasePage basepage;
-    ExtendReport extentreport;
+    private WebDriver driver;
+    private ExtentTest test;
+    private HomePageObjects homePageObjects;
+    private BasePage basepage;
+    private ExtendReport extentreport;
 
     public Homepage() {
+        this.driver = new ChromeDriver();
+        this.basepage = new BasePage(driver);
+        this.homePageObjects = new HomePageObjects(driver);
+        this.extentreport = new ExtendReport();
     }
 
     @Before
@@ -37,15 +40,11 @@ public class Homepage {
     
     @Given("User is on home page")
     public void user_is_on_home_page() throws IOException {
-        driver = new ChromeDriver();
-        basepage = new BasePage(driver);
-        
         basepage.maximizePage();
         basepage.impWait();
         basepage.getURL("https://www.amazon.in/");
         ExtendReport.logInfo(driver, "User landed in amazon Page");
         
-        homePageObjects = new HomePageObjects(driver);
         String title = homePageObjects.getHomePageTitle();
         System.out.println(title);
         ExtendReport.logPass(driver, "Page title fetched");
